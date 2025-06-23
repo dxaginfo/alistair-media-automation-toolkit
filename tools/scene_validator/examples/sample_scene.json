@@ -1,0 +1,84 @@
+{
+  "scene_id": "SC001",
+  "project_id": "PROJECT001",
+  "timestamp": "2025-06-23T10:15:00Z",
+  "location": "Downtown Cafe",
+  "characters": ["John", "Sarah"],
+  "shot_type": "medium",
+  "time_of_day": "morning",
+  "weather": "sunny",
+  "camera_setup": "tripod",
+  "props": [
+    {
+      "name": "coffee cup",
+      "position": "table",
+      "state": "half-full"
+    },
+    {
+      "name": "newspaper",
+      "position": "John's hands",
+      "state": "open"
+    },
+    {
+      "name": "cell phone",
+      "position": "table",
+      "state": "face down"
+    }
+  ],
+  "lighting_conditions": {
+    "type": "natural",
+    "direction": "front-left",
+    "intensity": "bright",
+    "color_temperature": "warm"
+  },
+  "sound_conditions": {
+    "ambient": "cafe background noise",
+    "volume_level": "medium",
+    "specific_sounds": ["coffee machine", "distant conversation"]
+  },
+  "dialogue": [
+    {
+      "character": "John",
+      "text": "Have you seen the news today?",
+      "emotion": "concerned"
+    },
+    {
+      "character": "Sarah",
+      "text": "No, what happened?",
+      "emotion": "curious"
+    },
+    {
+      "character": "John",
+      "text": "The stock market crashed overnight.",
+      "emotion": "worried"
+    }
+  ],
+  "actions": [
+    {
+      "character": "John",
+      "description": "Points to an article in the newspaper",
+      "timing": "after first dialogue"
+    },
+    {
+      "character": "Sarah",
+      "description": "Reaches for her phone",
+      "timing": "after second dialogue"
+    }
+  ],
+  "transitions": {
+    "in": "cut from previous",
+    "out": "fade to next"
+  },
+  "technical_specs": {
+    "resolution": "4K",
+    "aspect_ratio": "16:9",
+    "frame_rate": 24,
+    "audio_channels": "stereo"
+  },
+  "metadata": {
+    "created_by": "Director Name",
+    "last_modified": "2025-06-22T18:30:00Z",
+    "version": 2,
+    "notes": "Need to adjust lighting if shooting extends past noon"
+  }
+}
