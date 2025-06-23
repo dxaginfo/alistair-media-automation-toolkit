@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SceneValidator - Media Automation Toolkit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 40px;
+        }
+        .validation-card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .card-valid {
+            border-color: #28a745;
+        }
+        .card-valid .card-header {
+            background-color: #28a745;
+            color: white;
+        }
+        .card-invalid {
+            border-color: #dc3545;
+        }
+        .card-invalid .card-header {
+            background-color: #dc3545;
+            color: white;
+        }
+        .card-warning {
+            border-color: #ffc107;
+        }
+        .card-warning .card-header {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .issue-list {
+            padding-left: 20px;
+        }
+        .issue-item {
+            margin-bottom: 5px;
+        }
+        .upload-container {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        .upload-container:hover {
+            border-color: #007bff;
+        }
+        .logo {
+            max-height: 60px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="d-flex align-items-center pb-3 mb-4 border-bottom">
+            <img src="logo.png" alt="SceneValidator Logo" class="logo">
+            <span class="fs-4">SceneValidator</span>
+            <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+                <a class="me-3 py-2 text-decoration-none" href="#">Dashboard</a>
+                <a class="me-3 py-2 text-decoration-none" href="#">Reports</a>
+                <a class="me-3 py-2 text-decoration-none" href="#">Settings</a>
+                <a class="py-2 text-decoration-none" href="#">Help</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h1>Scene Validation Dashboard</h1>
+                    <p class="lead">Validate scene structure and continuity for your media projects.</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" id="validateAllBtn">Validate All Scenes</button>
+                    <button class="btn btn-outline-secondary ms-2" id="settingsBtn">Settings</button>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="upload-container" id="dropZone">
+                        <h5>Drop Scene Files Here</h5>
+                        <p>or</p>
+                        <input type="file" id="fileInput" class="d-none" accept=".json,.xml">
+                        <button class="btn btn-outline-primary" id="browseBtn">Browse Files</button>
+                        <p class="mt-2 text-muted">Supports JSON and XML formats</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Validation Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Scenes:</span>
+                                <strong id="totalScenes">0</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Valid Scenes:</span>
+                                <strong id="validScenes" class="text-success">0</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Scenes with Warnings:</span>
+                                <strong id="warningScenes" class="text-warning">0</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Invalid Scenes:</span>
+                                <strong id="invalidScenes" class="text-danger">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            Recent Activity
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group" id="activityList">
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">Scene SC001 validated</div>
+                                        Valid with 2 warnings
+                                    </div>
+                                    <span class="badge bg-warning rounded-pill">2</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">Scene SC002 validated</div>
+                                        Invalid with 3 errors
+                                    </div>
+                                    <span class="badge bg-danger rounded-pill">3</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">Scene SC003 validated</div>
+                                        Valid with no issues
+                                    </div>
+                                    <span class="badge bg-success rounded-pill">0</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mb-3">Validation Results</h2>
+            
+            <div id="validationResults">
+                <!-- Sample Validation Card - Valid with Warnings -->
+                <div class="card validation-card card-warning mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Scene: SC001 - Downtown Cafe</h5>
+                        <span class="badge bg-warning">Valid with Warnings</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Scene ID:</strong> SC001</p>
+                                <p><strong>Timestamp:</strong> 2025-06-23T10:15:00Z</p>
+                                <p><strong>Characters:</strong> John, Sarah</p>
+                            </div>
+                            <div class="col-md-8">
+                                <h6>Warnings:</h6>
+                                <ul class="issue-list">
+                                    <li class="issue-item">Lighting consistency may be affected if shooting extends past noon</li>
+                                    <li class="issue-item">Character "John" emotional state shows inconsistency with previous scene</li>
+                                </ul>
+                                <h6>Suggestions:</h6>
+                                <ul class="issue-list">
+                                    <li class="issue-item">Consider adding transition notes for timeline coherence</li>
+                                </ul>
+                                <div class="text-end mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">View Full Report</a>
+                                    <a href="#" class="btn btn-sm btn-primary">Edit Scene</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Validation Card - Invalid -->
+                <div class="card validation-card card-invalid mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Scene: SC002 - City Park</h5>
+                        <span class="badge bg-danger">Invalid</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Scene ID:</strong> SC002</p>
+                                <p><strong>Timestamp:</strong> 2025-06-23T11:30:00Z</p>
+                                <p><strong>Characters:</strong> John, Mark</p>
+                            </div>
+                            <div class="col-md-8">
+                                <h6>Errors:</h6>
+                                <ul class="issue-list">
+                                    <li class="issue-item">Missing required metadata: location</li>
+                                    <li class="issue-item">Timeline inconsistency: scene occurs before SC001 but references events from it</li>
+                                    <li class="issue-item">Character "Mark" not previously introduced in the story</li>
+                                </ul>
+                                <div class="text-end mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">View Full Report</a>
+                                    <a href="#" class="btn btn-sm btn-danger">Fix Issues</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Validation Card - Valid -->
+                <div class="card validation-card card-valid mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Scene: SC003 - Office Building</h5>
+                        <span class="badge bg-success">Valid</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Scene ID:</strong> SC003</p>
+                                <p><strong>Timestamp:</strong> 2025-06-23T13:45:00Z</p>
+                                <p><strong>Characters:</strong> Sarah, Boss</p>
+                            </div>
+                            <div class="col-md-8">
+                                <p class="text-success">No issues found. This scene meets all validation criteria.</p>
+                                <div class="text-end mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-secondary">View Full Report</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="pt-4 my-4 text-muted border-top">
+            <div class="row">
+                <div class="col-md-6">
+                    &copy; 2025 Media Automation Toolkit
+                </div>
+                <div class="col-md-6 text-end">
+                    <small>Powered by Gemini API</small>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal for Settings -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">SceneValidator Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">General</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="rules-tab" data-bs-toggle="tab" data-bs-target="#rules" type="button" role="tab" aria-controls="rules" aria-selected="false">Validation Rules</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab" aria-controls="api" aria-selected="false">API Settings</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="notification" aria-selected="false">Notifications</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="settingsTabsContent">
+                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                            <h5>General Settings</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="reportFormat" class="form-label">Default Report Format</label>
+                                    <select class="form-select" id="reportFormat">
+                                        <option value="html">HTML</option>
+                                        <option value="json">JSON</option>
+                                        <option value="pdf">PDF</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="watchInterval" class="form-label">Watch Interval (seconds)</label>
+                                    <input type="number" class="form-control" id="watchInterval" value="60">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="watchDirectories" class="form-label">Watch Directories</label>
+                                    <input type="text" class="form-control" id="watchDirectories" value="data/scenes">
+                                    <div class="form-text">Separate multiple directories with commas</div>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="autoValidate" checked>
+                                    <label class="form-check-label" for="autoValidate">Automatically validate new scenes</label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="rules" role="tabpanel" aria-labelledby="rules-tab">
+                            <h5>Validation Rules</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Required Metadata Fields</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqScene" checked>
+                                                <label class="form-check-label" for="reqScene">scene_id</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqTimestamp" checked>
+                                                <label class="form-check-label" for="reqTimestamp">timestamp</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqLocation" checked>
+                                                <label class="form-check-label" for="reqLocation">location</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqCharacters" checked>
+                                                <label class="form-check-label" for="reqCharacters">characters</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqShotType" checked>
+                                                <label class="form-check-label" for="reqShotType">shot_type</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="reqTimeOfDay">
+                                                <label class="form-check-label" for="reqTimeOfDay">time_of_day</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Continuity Checks</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkCharacter" checked>
+                                                <label class="form-check-label" for="checkCharacter">Check character presence</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkProps" checked>
+                                                <label class="form-check-label" for="checkProps">Check props</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkLighting" checked>
+                                                <label class="form-check-label" for="checkLighting">Check lighting</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkEnvironment" checked>
+                                                <label class="form-check-label" for="checkEnvironment">Check environment</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="api" role="tabpanel" aria-labelledby="api-tab">
+                            <h5>API Settings</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="geminiApiKey" class="form-label">Gemini API Key</label>
+                                    <input type="password" class="form-control" id="geminiApiKey" placeholder="Enter Gemini API key">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="geminiModel" class="form-label">Gemini Model</label>
+                                    <select class="form-select" id="geminiModel">
+                                        <option value="gemini-pro">gemini-pro</option>
+                                        <option value="gemini-pro-vision">gemini-pro-vision</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gcpProject" class="form-label">Google Cloud Project ID</label>
+                                    <input type="text" class="form-control" id="gcpProject" placeholder="Enter GCP project ID">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
+                            <h5>Notification Settings</h5>
+                            <form>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyOnValidation" checked>
+                                    <label class="form-check-label" for="notifyOnValidation">Send notifications on validation</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyOnErrorsOnly">
+                                    <label class="form-check-label" for="notifyOnErrorsOnly">Only notify on errors or warnings</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Notification Channels</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelEmail" checked>
+                                        <label class="form-check-label" for="channelEmail">Email</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="channelSlack" checked>
+                                        <label class="form-check-label" for="channelSlack">Slack</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="emailRecipients" class="form-label">Email Recipients</label>
+                                    <input type="text" class="form-control" id="emailRecipients" placeholder="Enter email addresses separated by commas">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="slackWebhook" class="form-label">Slack Webhook URL</label>
+                                    <input type="text" class="form-control" id="slackWebhook" placeholder="Enter Slack webhook URL">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize elements
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
+
+        // Event listeners
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.show();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFiles(e.target.files);
+            }
+        });
+
+        // Drag and drop functionality
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#007bff';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#ccc';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ccc';
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        // Handle files function (placeholder)
+        function handleFiles(files) {
+            console.log('Files received:', files);
+            alert(`${files.length} file(s) received. Processing would happen here.`);
+            
+            // Here you would typically send files to the API for validation
+            // For now, we'll just update the UI to show some activity
+            
+            const activityList = document.getElementById('activityList');
+            const newItem = document.createElement('li');
+            newItem.className = 'list-group-item d-flex justify-content-between align-items-start';
+            newItem.innerHTML = `
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">File ${files[0].name} uploaded</div>
+                    Validation in progress...
+                </div>
+                <span class="badge bg-secondary rounded-pill">...</span>
+            `;
+            
+            activityList.insertBefore(newItem, activityList.firstChild);
+            
+            // Update counters
+            const totalScenes = document.getElementById('totalScenes');
+            totalScenes.textContent = parseInt(totalScenes.textContent) + files.length;
+        }
+    </script>
+</body>
+</html>
