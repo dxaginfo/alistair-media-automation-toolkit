@@ -1,0 +1,134 @@
+{
+  "app": {
+    "name": "SceneValidator",
+    "version": "0.1.0",
+    "environment": "development",
+    "debug": true,
+    "log_level": "INFO",
+    "log_file": "logs/scene_validator.log"
+  },
+  
+  "api": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "base_url": "/api/v1",
+    "enable_cors": true,
+    "allowed_origins": ["http://localhost:3000", "https://media-toolkit.example.com"],
+    "rate_limit": {
+      "enabled": true,
+      "requests_per_minute": 60
+    }
+  },
+  
+  "storage": {
+    "type": "local",
+    "local": {
+      "data_dir": "data/scenes",
+      "reports_dir": "reports"
+    },
+    "cloud": {
+      "provider": "gcs",
+      "bucket": "your-bucket-name",
+      "prefix": "scene_validator"
+    }
+  },
+  
+  "google": {
+    "project_id": "your-google-project-id",
+    "credentials_file": "credentials/google-credentials.json",
+    "gemini": {
+      "api_key": "YOUR_GEMINI_API_KEY",
+      "model": "gemini-pro",
+      "temperature": 0.2,
+      "max_tokens": 1024
+    }
+  },
+  
+  "validation": {
+    "rules_file": "config/validation_rules.json",
+    "tolerance_levels": {
+      "continuity": "medium",
+      "structural": "high",
+      "timeline": "high"
+    },
+    "required_metadata": [
+      "scene_id",
+      "timestamp",
+      "location",
+      "characters"
+    ],
+    "optional_metadata": [
+      "props",
+      "time_of_day",
+      "weather",
+      "shot_type"
+    ]
+  },
+  
+  "reports": {
+    "formats": ["html", "json"],
+    "default_format": "html",
+    "template_dir": "templates/reports",
+    "enable_pdf": true,
+    "include_summary": true,
+    "include_suggestions": true
+  },
+  
+  "trigger": {
+    "watch_interval_seconds": 60,
+    "watch_directories": ["data/scenes"],
+    "watch_file_patterns": ["*.json", "*.xml"],
+    "ignore_patterns": ["*_temp.json", "*.bak"],
+    "trigger_on_metadata_change": true,
+    "notification_on_validation": true
+  },
+  
+  "notification": {
+    "enabled": true,
+    "only_on_errors": false,
+    "channels": {
+      "email": {
+        "enabled": false,
+        "smtp_server": "smtp.example.com",
+        "smtp_port": 587,
+        "sender": "scene-validator@example.com",
+        "recipients": ["director@example.com", "producer@example.com"]
+      },
+      "slack": {
+        "enabled": true,
+        "webhook_url": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK",
+        "channel": "#scene-validation",
+        "username": "SceneValidator"
+      }
+    }
+  },
+  
+  "integration": {
+    "storyboard_gen": {
+      "enabled": true,
+      "api_url": "http://localhost:5001/api/v1",
+      "auth_token": "YOUR_STORYBOARD_GEN_API_TOKEN"
+    },
+    "continuity_tracker": {
+      "enabled": true,
+      "api_url": "http://localhost:5002/api/v1",
+      "auth_token": "YOUR_CONTINUITY_TRACKER_API_TOKEN"
+    },
+    "timeline_assembler": {
+      "enabled": true,
+      "api_url": "http://localhost:5003/api/v1",
+      "auth_token": "YOUR_TIMELINE_ASSEMBLER_API_TOKEN"
+    },
+    "environment_tagger": {
+      "enabled": true,
+      "api_url": "http://localhost:5004/api/v1",
+      "auth_token": "YOUR_ENVIRONMENT_TAGGER_API_TOKEN"
+    }
+  },
+  
+  "development": {
+    "mock_api_responses": false,
+    "gemini_max_retries": 3,
+    "gemini_retry_delay": 2
+  }
+}
