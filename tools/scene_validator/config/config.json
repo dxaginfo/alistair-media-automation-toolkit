@@ -1,0 +1,29 @@
+{
+  "api_key": "YOUR_GEMINI_API_KEY",
+  "project_id": "YOUR_GOOGLE_CLOUD_PROJECT",
+  "storage_bucket": "media-automation-tools",
+  "validation_rules_path": "config/validation_rules.json",
+  "report_format": "html",
+  "verbose_logging": true,
+  "gemini_api": {
+    "enabled": true,
+    "model": "gemini-pro",
+    "max_tokens": 1024,
+    "temperature": 0.2
+  },
+  "cloud_storage": {
+    "enabled": true,
+    "report_folder": "validation_reports",
+    "keep_local_copy": true
+  },
+  "notification": {
+    "enabled": true,
+    "notify_on_errors_only": false,
+    "notification_channels": ["email", "slack"]
+  },
+  "performance": {
+    "parallel_processing": true,
+    "max_workers": 4,
+    "timeout_seconds": 300
+  }
+}
