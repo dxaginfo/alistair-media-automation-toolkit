@@ -1,0 +1,71 @@
+{
+  "scene_structure": {
+    "required_metadata": [
+      "scene_id", 
+      "timestamp", 
+      "location", 
+      "characters", 
+      "shot_type"
+    ],
+    "optional_metadata": [
+      "weather", 
+      "time_of_day", 
+      "camera_setup", 
+      "props", 
+      "lighting_conditions", 
+      "sound_conditions"
+    ],
+    "allowed_shot_types": [
+      "wide", 
+      "medium", 
+      "close_up", 
+      "extreme_close_up", 
+      "aerial", 
+      "pov", 
+      "tracking"
+    ]
+  },
+  "continuity": {
+    "check_character_presence": true,
+    "check_props": true,
+    "check_lighting": true,
+    "check_environment": true,
+    "check_wardrobe": true,
+    "check_makeup": true,
+    "check_time_progression": true,
+    "tolerance_levels": {
+      "lighting_changes": "medium",
+      "time_progression": "strict",
+      "prop_position": "medium",
+      "character_position": "strict"
+    }
+  },
+  "timeline": {
+    "check_sequence": true,
+    "allow_flashbacks": true,
+    "allow_flash_forwards": true,
+    "require_explicit_markers": true
+  },
+  "content_analysis": {
+    "dialogue_consistency": true,
+    "emotional_continuity": true,
+    "narrative_coherence": true,
+    "gemini_prompts": {
+      "dialogue_analysis": "Analyze if this dialogue is consistent with the character's previous dialogue patterns and personality traits: {dialogue}",
+      "emotional_analysis": "Determine if the emotional state in this scene: {scene_description} is consistent with the character's previous emotional trajectory",
+      "narrative_analysis": "Evaluate if this scene: {scene_description} maintains narrative coherence with the established story"
+    }
+  },
+  "technical": {
+    "check_resolution_consistency": true,
+    "check_aspect_ratio": true,
+    "check_color_grading": true,
+    "check_audio_levels": true,
+    "allowed_aspect_ratios": ["16:9", "2.35:1", "1.85:1", "1:1", "9:16"],
+    "audio_level_range": {
+      "dialogue": {"min": -24, "max": -12},
+      "music": {"min": -30, "max": -18},
+      "effects": {"min": -24, "max": -6}
+    }
+  }
+}
