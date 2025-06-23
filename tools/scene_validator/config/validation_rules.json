@@ -1,30 +1,101 @@
 {
-  "scene_structure": {
-    "required_metadata": [
-      "scene_id", 
-      "timestamp", 
-      "location", 
-      "characters", 
-      "shot_type"
-    ],
-    "optional_metadata": [
-      "weather", 
-      "time_of_day", 
-      "camera_setup", 
-      "props", 
-      "lighting_conditions", 
-      "sound_conditions"
-    ],
-    "allowed_shot_types": [
-      "wide", 
-      "medium", 
-      "close_up", 
-      "extreme_close_up", 
-      "aerial", 
-      "pov", 
-      "tracking"
-    ]
+  "schema_version": "1.0",
+  "last_updated": "2025-06-23",
+  
+  "metadata": {
+    "required": {
+      "scene_id": {
+        "type": "string",
+        "pattern": "^(SC|SCENE)[0-9]{3,4}$",
+        "description": "Unique scene identifier (e.g., SC001, SCENE0123)"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "ISO 8601 timestamp (e.g., 2025-06-23T14:30:00Z)"
+      },
+      "location": {
+        "type": "string",
+        "min_length": 2,
+        "description": "Scene location name or identifier"
+      },
+      "characters": {
+        "type": "array",
+        "min_items": 1,
+        "items": {
+          "type": "string"
+        },
+        "description": "List of character names present in the scene"
+      },
+      "shot_type": {
+        "type": "string",
+        "enum": ["wide", "medium", "close_up", "extreme_close_up", "aerial", "pov", "tracking"],
+        "description": "Primary camera shot type for the scene"
+      }
+    },
+    "optional": {
+      "time_of_day": {
+        "type": "string",
+        "enum": ["morning", "afternoon", "evening", "night", "dawn", "dusk"],
+        "description": "General time of day for the scene"
+      },
+      "weather": {
+        "type": "string",
+        "enum": ["sunny", "cloudy", "rainy", "stormy", "snowy", "foggy", "clear"],
+        "description": "Weather conditions during the scene"
+      },
+      "camera_setup": {
+        "type": "string",
+        "description": "Details about camera setup for the scene"
+      },
+      "duration": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Estimated scene duration in seconds"
+      },
+      "props": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "List of significant props used in the scene"
+      },
+      "lighting_conditions": {
+        "type": "string",
+        "description": "Description of lighting setup and conditions"
+      },
+      "sound_conditions": {
+        "type": "string",
+        "description": "Description of sound environment and audio requirements"
+      },
+      "emotions": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "Character emotional states, keyed by character name"
+      }
+    }
   },
+  
+  "structure_rules": {
+    "scene_descriptions": {
+      "min_length": 100,
+      "max_length": 5000,
+      "required_elements": ["setting", "action", "dialogue"],
+      "description": "Requirements for scene description text"
+    },
+    "dialogue": {
+      "format": "character_name: dialogue_text",
+      "description": "Standard format for dialogue lines"
+    },
+    "transitions": {
+      "valid_transitions": ["CUT TO:", "FADE IN:", "FADE OUT:", "DISSOLVE TO:", "SMASH CUT TO:", "MATCH CUT TO:"],
+      "description": "Valid scene transition descriptors"
+    }
+  },
+  
   "continuity": {
     "check_character_presence": true,
     "check_props": true,
@@ -40,12 +111,14 @@
       "character_position": "strict"
     }
   },
+  
   "timeline": {
     "check_sequence": true,
     "allow_flashbacks": true,
     "allow_flash_forwards": true,
     "require_explicit_markers": true
   },
+  
   "content_analysis": {
     "dialogue_consistency": true,
     "emotional_continuity": true,
@@ -56,6 +129,7 @@
       "narrative_analysis": "Evaluate if this scene: {scene_description} maintains narrative coherence with the established story"
     }
   },
+  
   "technical": {
     "check_resolution_consistency": true,
     "check_aspect_ratio": true,
@@ -67,5 +141,12 @@
       "music": {"min": -30, "max": -18},
       "effects": {"min": -24, "max": -6}
     }
+  },
+  
+  "gemini_prompts": {
+    "continuity_check": "Analyze the following scenes for continuity issues related to character presence, props, clothing, and environment: {scenes}",
+    "timeline_check": "Analyze the following scenes for timeline consistency and logical sequence: {scenes}",
+    "environment_check": "Analyze the following scenes for environment consistency including lighting, weather, and location details: {scenes}",
+    "character_consistency": "Analyze character consistency across the following scenes, including behavior, dialogue style, and motivations: {scenes}"
   }
 }
