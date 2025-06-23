@@ -1,0 +1,25 @@
+{
+  "scene_id": "SC001",
+  "timestamp": "2025-06-23T14:30:00Z",
+  "location": "Downtown Cafe",
+  "characters": ["John", "Sarah"],
+  "shot_type": "medium",
+  "time_of_day": "afternoon",
+  "weather": "sunny",
+  "props": ["coffee cup", "laptop", "smartphone"],
+  "description": "John and Sarah meet at their usual cafe. John appears nervous as he discusses their upcoming project deadline, while Sarah reassures him with a confident smile. The afternoon sun streams through the windows, creating a warm atmosphere despite John's anxiety. Several other patrons work on laptops in the background, creating a quiet buzz of activity.",
+  "dialogue": [
+    "John: I don't know if we're going to make this deadline. The client wants so many changes.",
+    "Sarah: We've been in tighter spots before. Remember the Morrison project?",
+    "John: That was different. We had more resources then.",
+    "Sarah: True, but we're smarter now. We can do this."
+  ],
+  "emotions": {
+    "John": "anxious",
+    "Sarah": "confident"
+  },
+  "duration": 120,
+  "camera_setup": "Stationary, medium shot with depth of field focus on characters, background slightly blurred",
+  "lighting_conditions": "Natural daylight through windows, warm tones",
+  "sound_conditions": "Ambient cafe noise, low background music, occasional cups clinking"
+}
